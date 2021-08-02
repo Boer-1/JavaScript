@@ -1,3 +1,5 @@
+"use strict";
+
 /*'use strict';
 //es6特性：基于块作用域的"let"声明
 const sentences = [
@@ -17,16 +19,15 @@ for (let s of sentences){
 
  */
 
-'use strict';
-
-var sentences = [{ subject: 'java', verb: 'is', object: 'great' }, { subject: 'elephants', verb: 'are', object: 'large' }];
+"use strict";
+var sentences = [{ subject: "java", verb: "is", object: "great~~" }, { subject: "elephants", verb: "are", object: "large~~" }];
 
 function say(_ref) {
     var subject = _ref.subject,
         verb = _ref.verb,
         object = _ref.object;
 
-    console.log("${subject} ${verb} ${object}");
+    console.log(subject + " " + verb + " " + object);
 }
 var _iteratorNormalCompletion = true;
 var _didIteratorError = false;

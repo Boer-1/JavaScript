@@ -17,24 +17,15 @@ for (let s of sentences){
 
  */
 
-'use strict';
+`use strict`;
 const sentences = [
-    {subject:'java',verb:'is',object:'great'},
-    {subject: 'elephants',verb: 'are',object: 'large'}
+    {subject:`java`,verb:`is`,object:`great~~`},
+    {subject: `elephants`,verb: `are`,object: `large~~`}
 ];
 
 function say({subject,verb,object}){
-    console.log("${subject} ${verb} ${object}");
+    console.log(`${subject} ${verb} ${object}`);
 }
 for (let s of sentences){
     say(s);
 }
-
-
-
-
-
-
-
-
-

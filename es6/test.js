@@ -1,3 +1,4 @@
+`use strict`;
 /*'use strict';
 //es6特性：基于块作用域的"let"声明
 const sentences = [
@@ -16,25 +17,17 @@ for (let s of sentences){
 
 
  */
+//我擦擦，换了重音符，他竟然好了！
 
-'use strict';
 const sentences = [
-    {subject:'java',verb:'is',object:'great'},
-    {subject: 'elephants',verb: 'are',object: 'large'}
+    {subject:`java`,verb:`is`,object:`great`},
+    {subject: `elephants`,verb: `are`,object: `large`},
 ];
 
 function say({subject,verb,object}){
-    console.log("${subject} ${verb} ${object}");
+    console.log(`${subject} ${verb} ${object}`);
 }
-for (let s of sentences){
+
+for (let s of sentences) {
     say(s);
 }
-
-
-
-
-
-
-
-
-
