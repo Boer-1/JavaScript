@@ -19,6 +19,7 @@ for (let s of sentences){
 
 
  */
+//我擦擦，换了重音符，他竟然好了！
 
 var sentences = [{ subject: "java", verb: "is", object: "great" }, { subject: "elephants", verb: "are", object: "large" }];
 
