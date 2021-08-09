@@ -4,6 +4,10 @@
     自己打印出自己被调用的次数，而且次数不会被篡改；
     变量count被安全的隐藏在IIFE中
  */
+
+
+
+
 const fx = (function (){
     let count = 0;
     //此处一定是返回一个函数，如此，f才可以是个函数
@@ -85,7 +89,7 @@ console.log(a.getSecret());
 console.log(b.getSecret());
 
 //DEMo-4
-//sets : 不允许重复数据的集合
+//set : 不允许重复数据的集合
 const roles = new Set();
 //想添加一个user role，可以用add（）方法
 roles.add('User');
@@ -100,3 +104,121 @@ console.log(roles.size);
 //删除role，用delete()方法，如果返回true则表示这个role咋set中，否则返回false
 console.log(roles.delete('Admin'));
 console.log(roles.delete('Admin'));
+
+//DEMO-5
+//异常处理和调用栈
+//IIFE避免了外界访问此 IIFE 中的变量，而且又不会污染全局作用域
+(function (){
+
+function a(){
+    console.log('a:calling bx');
+    b();
+    console.log('a:done');
+}
+function b(){
+    console.log('b:calling c');
+    c();
+    console.log('b:done');
+}
+function c(){
+    console.log('c:throwing error');
+    throw new Error('cx error');
+    console.log('c:done');
+}
+function d(){
+    console.log('d:calling cx');
+    c();
+    console.log('d:done');
+}
+try {
+    a();
+}catch (err){
+    console.log(err.stack);
+}
+try {
+    d();
+}catch (err){
+    console.log(err.stack);
+}
+
+})();
+
+//DEMO-6
+//迭代器和生成器
+(function (){
+    const book = [
+        'I',
+        'Love',
+        'You'
+    ];
+    //Object.values()返回一个数组，其元素是在对象上找到的可枚举属性值。
+    //属性的顺序与通过手动循环对象的属性值所给出的顺序相同。
+    const it = book.values();
+    let current = it.next();
+    while(!current.done){
+        console.log(current.value);
+        current = it.next();
+    }
+
+    //迭代协议
+    //:如果一个类提供了一个符号方法Symbol.iterator，这个方法返回一个具有
+    // 迭代行为的对象，那么这个类就是可迭代的
+    class Log {
+        constructor() {
+            this.message = [];
+        }
+        add(message){
+            this.message.push({message,timestamp:Date.now()});
+        }
+        [Symbol.iterator](){
+            return this.message.values();
+        }
+    }
+    const log = new Log();
+    log.add('I');
+    log.add('Love');
+    log.add('You');
+    log.add('too~~');
+    //像数组一样迭代
+    for (let entry of log){
+        console.log(`${entry.message} @ ${entry.timestamp}`);
+    }
+
+    //可以编写自己的迭代器
+    //斐波那契数列
+    class FibonacciSequence {
+        [Symbol.iterator](){
+            let a = 0,b = 1;
+            return{
+                next(){
+                    let rval = {value:b,done:false};
+                    b += a;
+                    a = rval.value;
+                    return rval;
+                }
+            };
+        }
+    }
+    const fib = new FibonacciSequence();
+    let i = 0;
+    for(let n of fib){
+        console.log(n);
+        if(++i > 9) break;
+    }
+
+    //生成器
+    function * rainbow(){
+        yield 'red';
+        yield 'orange';
+        yield 'yellow';
+        yield 'green';
+        yield 'blue';
+        yield 'indigo';
+        yield 'violet';
+    }
+    //rainbow生成器返回了一个迭代器，所以也可以对它使用for...of循环
+    for (let color of rainbow()){
+        console.log(color);
+    }
+
+})();

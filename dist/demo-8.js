@@ -12,6 +12,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
     自己打印出自己被调用的次数，而且次数不会被篡改；
     变量count被安全的隐藏在IIFE中
  */
+
 var fx = function () {
     var count = 0;
     //此处一定是返回一个函数，如此，f才可以是个函数
@@ -44,6 +45,7 @@ var u2 = { name: 'Jackson' };
 var u3 = { name: 'Olive' };
 var u4 = { name: 'James' };
 //创建一个map对象
+//不认识Map()导致转不成es5格式，尚未解决
 var userRoles = new Map();
 //使用set（）方法把user赋给role
 userRoles.set(u1, 'User');
@@ -192,3 +194,252 @@ a.setSecret('secret A');
 b.setSecret('secret B');
 console.log(a.getSecret());
 console.log(b.getSecret());
+
+//DEMo-4
+//sets : 不允许重复数据的集合
+var roles = new Set();
+//想添加一个user role，可以用add（）方法
+roles.add('User');
+//如果想把这个user变成管理员，可以继续调用add()方法
+roles.add('Admin');
+//set 也有 size 属性
+console.log(roles.size);
+//set 的优美之处在于，不需要在添加元素的时候检查set中是否已经有这个元素了。
+//如果添加早已存在于set中的值，设么都不会发生
+roles.add('User');
+console.log(roles.size);
+//删除role，用delete()方法，如果返回true则表示这个role咋set中，否则返回false
+console.log(roles.delete('Admin'));
+console.log(roles.delete('Admin'));
+
+//DEMO-5
+//异常处理和调用栈
+//IIFE避免了外界访问此 IIFE 中的变量，而且又不会污染全局作用域
+(function () {
+
+    function a() {
+        console.log('a:calling bx');
+        b();
+        console.log('a:done');
+    }
+    function b() {
+        console.log('b:calling c');
+        c();
+        console.log('b:done');
+    }
+    function c() {
+        console.log('c:throwing error');
+        throw new Error('cx error');
+        console.log('c:done');
+    }
+    function d() {
+        console.log('d:calling cx');
+        c();
+        console.log('d:done');
+    }
+    try {
+        a();
+    } catch (err) {
+        console.log(err.stack);
+    }
+    try {
+        d();
+    } catch (err) {
+        console.log(err.stack);
+    }
+})();
+
+//DEMO-6
+//迭代器和生成器
+(function () {
+    var _marked = /*#__PURE__*/regeneratorRuntime.mark(rainbow);
+
+    var book = ['I', 'Love', 'You'];
+    //Object.values()返回一个数组，其元素是在对象上找到的可枚举属性值。
+    //属性的顺序与通过手动循环对象的属性值所给出的顺序相同。
+    var it = book.values();
+    var current = it.next();
+    while (!current.done) {
+        console.log(current.value);
+        current = it.next();
+    }
+
+    //迭代协议
+    //:如果一个类提供了一个符号方法Symbol.iterator，这个方法返回一个具有
+    // 迭代行为的对象，那么这个类就是可迭代的
+
+    var Log = function () {
+        function Log() {
+            _classCallCheck(this, Log);
+
+            this.message = [];
+        }
+
+        _createClass(Log, [{
+            key: 'add',
+            value: function add(message) {
+                this.message.push({ message: message, timestamp: Date.now() });
+            }
+        }, {
+            key: Symbol.iterator,
+            value: function value() {
+                return this.message.values();
+            }
+        }]);
+
+        return Log;
+    }();
+
+    var log = new Log();
+    log.add('I');
+    log.add('Love');
+    log.add('You');
+    log.add('too~~');
+    //像数组一样迭代
+    var _iteratorNormalCompletion5 = true;
+    var _didIteratorError5 = false;
+    var _iteratorError5 = undefined;
+
+    try {
+        for (var _iterator5 = log[Symbol.iterator](), _step5; !(_iteratorNormalCompletion5 = (_step5 = _iterator5.next()).done); _iteratorNormalCompletion5 = true) {
+            var entry = _step5.value;
+
+            console.log(entry.message + ' @ ' + entry.timestamp);
+        }
+
+        //可以编写自己的迭代器
+        //斐波那契数列
+    } catch (err) {
+        _didIteratorError5 = true;
+        _iteratorError5 = err;
+    } finally {
+        try {
+            if (!_iteratorNormalCompletion5 && _iterator5.return) {
+                _iterator5.return();
+            }
+        } finally {
+            if (_didIteratorError5) {
+                throw _iteratorError5;
+            }
+        }
+    }
+
+    var FibonacciSequence = function () {
+        function FibonacciSequence() {
+            _classCallCheck(this, FibonacciSequence);
+        }
+
+        _createClass(FibonacciSequence, [{
+            key: Symbol.iterator,
+            value: function value() {
+                var a = 0,
+                    b = 1;
+                return {
+                    next: function next() {
+                        var rval = { value: b, done: false };
+                        b += a;
+                        a = rval.value;
+                        return rval;
+                    }
+                };
+            }
+        }]);
+
+        return FibonacciSequence;
+    }();
+
+    var fib = new FibonacciSequence();
+    var i = 0;
+    var _iteratorNormalCompletion6 = true;
+    var _didIteratorError6 = false;
+    var _iteratorError6 = undefined;
+
+    try {
+        for (var _iterator6 = fib[Symbol.iterator](), _step6; !(_iteratorNormalCompletion6 = (_step6 = _iterator6.next()).done); _iteratorNormalCompletion6 = true) {
+            var n = _step6.value;
+
+            console.log(n);
+            if (++i > 9) break;
+        }
+
+        //生成器
+    } catch (err) {
+        _didIteratorError6 = true;
+        _iteratorError6 = err;
+    } finally {
+        try {
+            if (!_iteratorNormalCompletion6 && _iterator6.return) {
+                _iterator6.return();
+            }
+        } finally {
+            if (_didIteratorError6) {
+                throw _iteratorError6;
+            }
+        }
+    }
+
+    function rainbow() {
+        return regeneratorRuntime.wrap(function rainbow$(_context) {
+            while (1) {
+                switch (_context.prev = _context.next) {
+                    case 0:
+                        _context.next = 2;
+                        return 'red';
+
+                    case 2:
+                        _context.next = 4;
+                        return 'orange';
+
+                    case 4:
+                        _context.next = 6;
+                        return 'yellow';
+
+                    case 6:
+                        _context.next = 8;
+                        return 'green';
+
+                    case 8:
+                        _context.next = 10;
+                        return 'blue';
+
+                    case 10:
+                        _context.next = 12;
+                        return 'indigo';
+
+                    case 12:
+                        _context.next = 14;
+                        return 'violet';
+
+                    case 14:
+                    case 'end':
+                        return _context.stop();
+                }
+            }
+        }, _marked, this);
+    }
+    //rainbow生成器返回了一个迭代器，所以也可以对它使用for...of循环
+    var _iteratorNormalCompletion7 = true;
+    var _didIteratorError7 = false;
+    var _iteratorError7 = undefined;
+
+    try {
+        for (var _iterator7 = rainbow()[Symbol.iterator](), _step7; !(_iteratorNormalCompletion7 = (_step7 = _iterator7.next()).done); _iteratorNormalCompletion7 = true) {
+            var color = _step7.value;
+
+            console.log(color);
+        }
+    } catch (err) {
+        _didIteratorError7 = true;
+        _iteratorError7 = err;
+    } finally {
+        try {
+            if (!_iteratorNormalCompletion7 && _iterator7.return) {
+                _iterator7.return();
+            }
+        } finally {
+            if (_didIteratorError7) {
+                throw _iteratorError7;
+            }
+        }
+    }
+})();
