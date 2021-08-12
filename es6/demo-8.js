@@ -1,7 +1,7 @@
 //DEMO-1
 //统计一个数组中所有数字的综合
 const moment = require("moment-timezone");
-const {fn} = require("moment-timezone");
+const url = require("url");
 (function (){
     function sumArrElements(arr){
         let add = 0;
@@ -80,3 +80,11 @@ const {fn} = require("moment-timezone");
         .subtract(3,'minutes');
     console.log(d3);
 })();
+
+// function printDOM(node,prefix){
+//     console.log(prefix,node.nodeName);
+//     for(let i = 0;i < node.chiledNodes.length;i++){
+//         printDOM(node.chiledNodes[i],prefix + '\t');
+//     }
+// }
+// printDOM(document,'');

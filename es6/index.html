@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="China">
+	<head>
+		<meta charset="utf-8">
+		<title>Simple</title>
+		<style>
+			.callout{
+				border: solid 1px #ff0080;
+				margin: 2px 4px;
+				padding: 2px 6px;
+			}
+			.code {
+				background: #ccc;
+				margin: 1px 2px;
+				padding: 1px 4px;
+				font-family: monospace;
+			}
+			.highlight{
+				background: #ff0;
+				font-style: italic;
+			}
+		</style>
+	</head>
+	<body>
+		<header>
+			<h1>Simple HTML</h1>
+		</header>
+		<div id="content">
+			<p>This is a <i>simple</i> HTML file.</p>
+			<div class="callout">
+				<p>This is as fancy as we'll get!</p>
+			</div>
+			<p>IDs (such as <span class="code">#content</span>)
+				are unique (there can only be one per page).
+			</p>
+			<p>
+				Classes (such as <span class="code">.callout</span>)
+				can be used on many elements.
+			</p>
+			<div id="callout2" class="callout fancy">
+				<p>
+					A single HTML element can have multiple classes.
+				</p>
+			</div>
+			<button data-action = 'highlight' data-containing = 'unique'>
+				Highlight paragraphs containing "unique"
+			</button>
+			<button data-action="removeHighlights">
+				Remove highlights
+			</button>
+		</div>
+		<div class="serverInfo">
+			Server is running on <span data-replace = "platform">???</span>
+			with Node <span data-replace="nodeVerdion">???</span>. It has
+			been up for <span data-replace="uptime">???</span> seconds.
+		</div>
+		<script>
+			//打印DOM
+			function printDOM(node,prefix){
+				console.log(prefix + node.nodeName);
+				for(let i=0;i<node.childNodes.length;i++){
+					printDOM(node.childNodes[i],prefix + '\t');
+				}
+			}
+			printDOM(document,'');
+			const paral = document.getElementsByTagName('p')[0];
+			console.log(paral.textContent);
+
+			//创建DOM元素，插入两个段落元素
+			const p1 = document.createElement('p');
+			const p2 = document.createElement('p');
+			p1.textContent = 'I was created dynamically!';
+			p2.textContent = 'I was also created dynamically!';
+			const parent = document.getElementById('content');
+			const firstChild = parent.childNodes[0];
+			parent.insertBefore(p1,firstChild);
+			parent.append(p2);
+
+			//高亮所有包含单词'unique'的段落
+			function highlightParas(containing){
+				containing = new RegExp(`\\b${containing}\\b`,'i');
+				const paras = document.getElementsByTagName('p');
+				//console.log(paras);
+				//给段落逐一对照，x 为形参
+				for(let x of paras){
+					if(!containing.test(x.textContent)) continue;
+					x.classList.add('highlight');
+				}
+			}
+			//删除highlight这个类
+			function removeParaHighlights(){
+				const paras = document.querySelectorAll('p.highlight');
+				for (let p of paras){
+					p.classList.remove('highlight');
+				}
+			}
+
+			//暂时注释掉，现在用button控制高亮(又不用了)
+			//highlightParas('unique');
+			//removeParaHighlights();
+
+			const highlightActions = document.querySelectorAll('[data-action = "highlight"]');
+			console.log(highlightActions[0].dataset);
+			//若想修改属性则
+			// highlightActions[0].dataset.containing = 'giraffe';
+			// highlightActions[0].dataset.caseSensitive = 'true';
+			for (let a of highlightActions){
+				a.addEventListener('click',evt => {
+					evt.preventDefault();
+					highlightParas(a.dataset.containing);
+				});
+			}
+			const removeHighlightActions = document.querySelectorAll('[data-action = "removeHighlights"]');
+			for (let a of removeHighlightActions){
+				a.addEventListener('click',evt => {
+					evt.preventDefault();
+					removeParaHighlights();
+				})
+			}
+
+
+
+			//setInterval(refreshServerInfo,200);
+		//really?---------------------------------------------------------
+		</script>
+		<script type="application/javascript;version = 1.8">
+			function refreshServerInfo(){
+				const req = new XMLHttpRequest();
+				req.addEventListener('load',function(){
+				//TODO:将这些值放在HTML中
+				console.log(this.responseText);
+				});
+				req.open('GET','http://lovalhost:7070',true);
+				req.send();
+			}
+			setInterval(refreshServerInfo,200);
+		</script>
+
+	</body>
+</html>
